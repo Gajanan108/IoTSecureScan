@@ -1,8 +1,9 @@
- IoTSecureScan
+IoTSecureScan
 The tool demonstrates how automated scanning and vulnerability identification can be integrated into IoT networks
- IoT SAST Tool: Firmware Vulnerability Scanner
+IoT SAST Tool: Firmware Vulnerability Scanner
+![image](https://github.com/user-attachments/assets/21584813-9b13-4687-99dd-d94f05a182e6)
 
- Overview
+Overview
 
 This tool is designed to perform Static Application Security Testing (SAST) on IoT firmware to identify common vulnerabilities as per the OWASP IoT Top 10. The tool integrates with SonarQube for vulnerability scanning and generates comprehensive security reports. The tool primarily focuses on detecting issues such as hardcoded passwords, insecure services, lack of secure update mechanisms, and more, using SonarQubes static analysis capabilities.
 
