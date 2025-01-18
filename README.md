@@ -1,7 +1,11 @@
 IoTSecureScan
 The tool demonstrates how automated scanning and vulnerability identification can be integrated into IoT networks
 IoT SAST Tool: Firmware Vulnerability Scanner
+
+
 ![image](https://github.com/user-attachments/assets/21584813-9b13-4687-99dd-d94f05a182e6)
+
+
 
 Overview
 
