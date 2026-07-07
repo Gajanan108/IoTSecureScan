@@ -1,0 +1,196 @@
+{
+  "generated_utc": "2026-07-07T01:31:36.670334+00:00",
+  "risk_score": 95.0,
+  "risk_grade": "CRITICAL",
+  "firmware_scope": "synthetic vulnerable firmware fixture (demo)",
+  "network_scope": "127.0.0.1:23,8080,1883",
+  "findings": [
+    {
+      "module": "SAST",
+      "title": "Embedded private key material",
+      "severity": "CRITICAL",
+      "cwe": "CWE-321",
+      "owasp_iot": "I1",
+      "location": "./demo_firmware_fixture/etc/server.key",
+      "description": "A private key is embedded directly in the firmware image, typically shared across an entire product line.",
+      "evidence": "-----BEGIN RSA PRIVATE KEY----- MIIBOgIBAAJBAK",
+      "recommendation": "Provision a unique key per device via a hardware secure element; never ship a shared private key."
+    },
+    {
+      "module": "SAST",
+      "title": "Weak password hash format (MD5-crypt)",
+      "severity": "MEDIUM",
+      "cwe": "CWE-916",
+      "owasp_iot": "I1",
+      "location": "./demo_firmware_fixture/etc/shadow",
+      "description": "Password hashes use the legacy MD5-crypt ($1$) format, which is fast to brute-force offline.",
+      "evidence": "root:$1$abcd$K3xamplEwe",
+      "recommendation": "Use bcrypt/scrypt/argon2 with a per-user salt for credential storage."
+    },
+    {
+      "module": "SAST",
+      "title": "Weak password hash format (MD5-crypt)",
+      "severity": "MEDIUM",
+      "cwe": "CWE-916",
+      "owasp_iot": "I1",
+      "location": "./demo_firmware_fixture/etc/passwd",
+      "description": "Password hashes use the legacy MD5-crypt ($1$) format, which is fast to brute-force offline.",
+      "evidence": ":/bin/sh admin:$1$4Uf/$H0nQe1Exam",
+      "recommendation": "Use bcrypt/scrypt/argon2 with a per-user salt for credential storage."
+    },
+    {
+      "module": "SAST",
+      "title": "Hardcoded credential or secret",
+      "severity": "CRITICAL",
+      "cwe": "CWE-798",
+      "owasp_iot": "I1",
+      "location": "./demo_firmware_fixture/bin/start_services.sh",
+      "description": "A hardcoded password, secret, or API key is embedded directly in firmware source/config.",
+      "evidence": "l /bin/sh & DB_PASSWORD=\"SuperSecret123!\" CLOUD_API_KEY",
+      "recommendation": "Remove hardcoded secrets; provision unique per-device credentials via a secure element/HSM at manufacturing time."
+    },
+    {
+      "module": "SAST",
+      "title": "Hardcoded credential or secret",
+      "severity": "CRITICAL",
+      "cwe": "CWE-798",
+      "owasp_iot": "I1",
+      "location": "./demo_firmware_fixture/bin/start_services.sh",
+      "description": "A hardcoded password, secret, or API key is embedded directly in firmware source/config.",
+      "evidence": "ret123!\" CLOUD_API_KEY=\"AKIAEXAMPLE1234567890\" curl http://u",
+      "recommendation": "Remove hardcoded secrets; provision unique per-device credentials via a secure element/HSM at manufacturing time."
+    },
+    {
+      "module": "SAST",
+      "title": "Telnet daemon enabled at boot",
+      "severity": "HIGH",
+      "cwe": "CWE-319",
+      "owasp_iot": "I2",
+      "location": "./demo_firmware_fixture/bin/start_services.sh",
+      "description": "Firmware starts a telnet service, which transmits credentials and commands in cleartext.",
+      "evidence": "e debug access telnetd -l /bin/sh & D",
+      "recommendation": "Disable telnet; use SSH with key-based auth restricted to a management VLAN."
+    },
+    {
+      "module": "SAST",
+      "title": "Cleartext HTTP endpoint referenced",
+      "severity": "MEDIUM",
+      "cwe": "CWE-319",
+      "owasp_iot": "I7",
+      "location": "./demo_firmware_fixture/bin/start_services.sh",
+      "description": "Firmware communicates with a remote endpoint (e.g. update server) over unencrypted HTTP.",
+      "evidence": "34567890\" curl http://update.example.com/fw_latest.bin -o /tmp/fw.bin",
+      "recommendation": "Use HTTPS/TLS with certificate pinning for firmware update and telemetry channels."
+    },
+    {
+      "module": "SAST",
+      "title": "World-writable file in firmware image",
+      "severity": "MEDIUM",
+      "cwe": "CWE-732",
+      "owasp_iot": "I9",
+      "location": "./demo_firmware_fixture/bin/start_services.sh",
+      "description": "File is world-writable, allowing any local process/user to modify it.",
+      "evidence": "",
+      "recommendation": "Restrict permissions to least privilege (e.g. 0644/0755)."
+    },
+    {
+      "module": "SAST",
+      "title": "Memory-unsafe or command-injection-prone function",
+      "severity": "HIGH",
+      "cwe": "CWE-120",
+      "owasp_iot": "I5",
+      "location": "./demo_firmware_fixture/bin/app.c",
+      "description": "Firmware source calls a function commonly associated with buffer overflows or command injection.",
+      "evidence": "r buf[64];     strcpy(buf, user_input",
+      "recommendation": "Replace with bounds-checked equivalents (strncpy/snprintf); never pass untrusted input to system()."
+    },
+    {
+      "module": "SAST",
+      "title": "Memory-unsafe or command-injection-prone function",
+      "severity": "HIGH",
+      "cwe": "CWE-120",
+      "owasp_iot": "I5",
+      "location": "./demo_firmware_fixture/bin/app.c",
+      "description": "Firmware source calls a function commonly associated with buffer overflows or command injection.",
+      "evidence": "s check */     system(user_input);   ",
+      "recommendation": "Replace with bounds-checked equivalents (strncpy/snprintf); never pass untrusted input to system()."
+    },
+    {
+      "module": "FCA",
+      "title": "Heartbleed (CVE-2014-0160)",
+      "severity": "CRITICAL",
+      "cwe": "CWE-125",
+      "owasp_iot": "I5",
+      "location": "./demo_firmware_fixture - OpenSSL 1.0.1f",
+      "description": "Bundled OpenSSL version is vulnerable to Heartbleed, allowing remote memory disclosure (private keys, credentials, session data).",
+      "evidence": "detected version 1.0.1f (< patched 1.0.1g)",
+      "recommendation": "Upgrade OpenSSL to a release newer than 1.0.1g."
+    },
+    {
+      "module": "FCA",
+      "title": "BusyBox wget command handling issue (CVE-2018-1000517)",
+      "severity": "HIGH",
+      "cwe": "CWE-22",
+      "owasp_iot": "I5",
+      "location": "./demo_firmware_fixture - BusyBox 1.19.4",
+      "description": "Bundled BusyBox version is affected by a known wget-related file handling vulnerability.",
+      "evidence": "detected version 1.19.4 (< patched 1.28.0)",
+      "recommendation": "Upgrade BusyBox to a release newer than 1.28.0."
+    },
+    {
+      "module": "FCA",
+      "title": "Dropbear SSH memory corruption (CVE-2016-7406)",
+      "severity": "HIGH",
+      "cwe": "CWE-787",
+      "owasp_iot": "I5",
+      "location": "./demo_firmware_fixture - Dropbear SSH 2014.63",
+      "description": "Bundled Dropbear SSH version is affected by known memory-corruption vulnerabilities reachable pre-auth.",
+      "evidence": "detected version 2014.63 (< patched 2016.74)",
+      "recommendation": "Upgrade Dropbear SSH to a release newer than 2016.74."
+    },
+    {
+      "module": "DAST",
+      "title": "Insecure/high-risk service exposed: Telnet (port 23)",
+      "severity": "CRITICAL",
+      "cwe": "CWE-319",
+      "owasp_iot": "I2",
+      "location": "127.0.0.1:23",
+      "description": "Telnet transmits credentials/commands in cleartext and is the #1 IoT botnet (e.g. Mirai) entry point.",
+      "evidence": "BusyBox v1.19.4 (2014-01-01) built-in shell\r\nIPCAM-DVR login:",
+      "recommendation": "Disable Telnet unless strictly required; otherwise restrict to an authenticated management VLAN."
+    },
+    {
+      "module": "DAST",
+      "title": "Insecure/high-risk service exposed: MQTT (port 1883)",
+      "severity": "HIGH",
+      "cwe": "CWE-306",
+      "owasp_iot": "I2",
+      "location": "127.0.0.1:1883",
+      "description": "MQTT broker reachable; if unauthenticated, any client can publish/subscribe to device topics.",
+      "evidence": "mqtt",
+      "recommendation": "Disable MQTT unless strictly required; otherwise restrict to an authenticated management VLAN."
+    },
+    {
+      "module": "DAST",
+      "title": "Open network service: BaseHTTPServer (port 8080)",
+      "severity": "LOW",
+      "cwe": "CWE-1059",
+      "owasp_iot": "I8",
+      "location": "127.0.0.1:8080",
+      "description": "Service BaseHTTPServer 0.6 is reachable over the network.",
+      "evidence": "",
+      "recommendation": "Confirm this service is required and reachable only from authorized management hosts."
+    },
+    {
+      "module": "DAST",
+      "title": "Web admin panel advertises default credentials",
+      "severity": "CRITICAL",
+      "cwe": "CWE-1188",
+      "owasp_iot": "I9",
+      "location": "127.0.0.1:8080",
+      "description": "The device's web management interface response references default/shipped credentials.",
+      "evidence": "<html><h1>ip camera admin</h1>default login: admin / admin</html>",
+      "recommendation": "Force a credential change on first boot; never ship a working default account."
+    }
+  ]
+}
